@@ -143,8 +143,8 @@ const handleMessage = (sender_psid, message) => {
       callSendAPI(sender_psid, 'Please insert your name and your birth date. Example: Risky Nugraha, 1980-12-20')
     }
 
-    if(entityChosen === 'wit$sentiment'){
-      console.log('sentiment:',message.text)
+    if(message.text === 'Please insert your name and your birth date. Example: Risky Nugraha, 1980-12-20'){
+      console.log('Ask to count birth date')
     }
     
     // if (entityChosen === 'wit$thanks') {
