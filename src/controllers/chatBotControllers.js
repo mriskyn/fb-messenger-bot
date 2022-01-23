@@ -96,7 +96,7 @@ const callSendAPI = (sender_psid, response) => {
     (err, res, body) => {
       if (!err) {
         console.log('message sent!');
-        createMessenger(sender_psid, response);
+        // createMessenger(sender_psid, response);
       } else {
         console.error('Unable to send message:' + err);
       }
@@ -122,6 +122,8 @@ const handleMessage = (sender_psid, message) => {
       entityChosen = name;
     }
   });
+
+  createMessenger(sender_psid, message.text);
 
   if (entityChosen === '') {
     //default
