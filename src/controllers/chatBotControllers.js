@@ -127,6 +127,10 @@ const handleMessage = (sender_psid, message) => {
   createMessenger(sender_psid, message.text);
   console.log('message.nlp',message.nlp)
 
+  if(message.text === 'Please insert your name and your birth date. Example: Risky Nugraha, 1980-12-20'){
+    console.log('Ask to count birth date')
+  }
+
   if (entityChosen === '') {
     //default
     callSendAPI(
@@ -143,9 +147,6 @@ const handleMessage = (sender_psid, message) => {
       callSendAPI(sender_psid, 'Please insert your name and your birth date. Example: Risky Nugraha, 1980-12-20')
     }
 
-    if(message.text === 'Please insert your name and your birth date. Example: Risky Nugraha, 1980-12-20'){
-      console.log('Ask to count birth date')
-    }
     
     // if (entityChosen === 'wit$thanks') {
     //   //send thanks message
