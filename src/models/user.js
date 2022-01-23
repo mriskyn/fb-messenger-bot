@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       name: { type: DataTypes.STRING },
       fbId: { type: DataTypes.STRING },
+      birth_date: { type: DataTypes.DATEONLY },
     },
     {
       sequelize,

@@ -123,6 +123,7 @@ const handleMessage = (sender_psid, message) => {
     }
   });
 
+  console.log('message.text',message.text)
   createMessenger(sender_psid, message.text);
 
   if (entityChosen === '') {
@@ -134,20 +135,21 @@ const handleMessage = (sender_psid, message) => {
   } else {
     if (entityChosen === 'wit$greetings') {
       //send greetings message
-      console.log('message.text',message.text)
       callSendAPI(
         sender_psid,
-        'Hi there! This bot is created by Risky Nugraha'
+        'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
       );
+      callSendAPI(sender_psid, 'Please insert your name and your birth date. Example: Risky Nugraha, 1980-12-20')
     }
-    if (entityChosen === 'wit$thanks') {
-      //send thanks message
-      callSendAPI(sender_psid, `You're welcome!`);
-    }
-    if (entityChosen === 'wit$bye') {
-      //send bye message
-      callSendAPI(sender_psid, 'bye-bye!');
-    }
+    console.log('message.nlp',message.nlp)
+    // if (entityChosen === 'wit$thanks') {
+    //   //send thanks message
+    //   callSendAPI(sender_psid, `You're welcome!`);
+    // }
+    // if (entityChosen === 'wit$bye') {
+    //   //send bye message
+    //   callSendAPI(sender_psid, 'bye-bye!');
+    // }
   }
 };
 
