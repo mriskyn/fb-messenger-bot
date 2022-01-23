@@ -18,7 +18,12 @@ app.use(express.urlencoded({ extended: true }));
 initWebRoutes(app);
 
 async function main() {
-  await sequelize.sync({ alter: true });
+  try {
+    await sequelize.sync({ alter: true });
+    
+  } catch (err) {
+    console.log('err:',err)
+  }
   app.listen(PORT, () => console.log(`App is running on port:`, PORT));
 }
 
