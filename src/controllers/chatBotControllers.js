@@ -132,6 +132,7 @@ const handleMessage = (sender_psid, message) => {
   } else {
     if (entityChosen === 'wit$greetings') {
       //send greetings message
+      console.log('message.text',message.text)
       callSendAPI(
         sender_psid,
         'Hi there! This bot is created by Risky Nugraha'
