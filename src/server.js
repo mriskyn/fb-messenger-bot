@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const viwEngine = require('./config/viewEngine');
+const { sequelize } = require('./models');
 const initWebRoutes = require('./routes/web');
 
 const app = express();
@@ -16,4 +17,9 @@ app.use(express.urlencoded({ extended: true }));
 // init all web routes
 initWebRoutes(app);
 
-app.listen(PORT, () => console.log(`App is running on port:`, PORT));
+async function main() {
+  await sequelize.sync({ alter: true });
+  app.listen(PORT, () => console.log(`App is running on port:`, PORT));
+}
+
+main();
