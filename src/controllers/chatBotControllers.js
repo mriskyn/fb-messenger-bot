@@ -219,19 +219,34 @@ const getProfileUser = (sender_psid) => {
         //   console.log('received ' + data.length + ' bytes of compressed data')
         // })
         const data = res.body;
-        try {
-          const user = await User.findOne({ where: { fbId: data.id } });
+        User.findOne({ where: { fbId: data.id } })
+          .then((user) => {
+            if (!user) {
+              return User.create({
+                name: `${data.first_name} ${data.last_name}`,
+                fbId: data.id,
+              });
+            }
+          })
+          .then(() => {
+            console.log('user:', user);
+          })
+          .catch((err) => {
+            console.log('err:', err);
+          });
+        // try {
+        //   const user = await User.findOne({ where: { fbId: data.id } });
 
-          if(!user){
-            await User.create({
-              name: `${data.first_name} ${data.last_name}`,
-              fbId: data.id
-            })
-          }
-          console.log('user:', user)
-        } catch (err) {
-          console.log('err:', err);
-        }
+        //   if(!user){
+        //     await User.create({
+        //       name: `${data.first_name} ${data.last_name}`,
+        //       fbId: data.id
+        //     })
+        //   }
+        //   console.log('user:', user)
+        // } catch (err) {
+        //   console.log('err:', err);
+        // }
       } else {
         console.error('Error get user:' + err);
       }
