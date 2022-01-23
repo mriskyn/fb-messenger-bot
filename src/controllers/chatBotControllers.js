@@ -1,6 +1,8 @@
 require('dotenv').config();
 const request = require('request');
 
+const { User } = require('../models');
+
 const postWebHook = (req, res) => {
   // Parse the request body from the POST
   let body = req.body;
@@ -209,13 +211,27 @@ const getProfileUser = (sender_psid) => {
       },
       method: 'GET',
     },
-    (err, res, body) => {
+    async (err, res, body) => {
       if (!err) {
-        console.log('res.body:',res.body)
-        res.on('data', function(data) {
-          // compressed data as it is received
-          console.log('received ' + data.length + ' bytes of compressed data')
-        })
+        console.log('res.body:', res.body);
+        // res.on('data', function(data) {
+        //   // compressed data as it is received
+        //   console.log('received ' + data.length + ' bytes of compressed data')
+        // })
+        const data = res.body;
+        try {
+          const user = await User.findOne({ where: { fbId: data.fbId } });
+
+          if(!user){
+            await User.create({
+              name: `${data.first_name} ${data.last_name}`,
+              fbId: data.fbId
+            })
+          }
+          console.log('user:', user)
+        } catch (err) {
+          console.log('err:', err);
+        }
       } else {
         console.error('Error get user:' + err);
       }
