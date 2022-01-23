@@ -125,6 +125,7 @@ const handleMessage = (sender_psid, message) => {
 
   console.log('message.text',message.text)
   createMessenger(sender_psid, message.text);
+  console.log('message.nlp',message.nlp)
 
   if (entityChosen === '') {
     //default
@@ -141,7 +142,7 @@ const handleMessage = (sender_psid, message) => {
       );
       callSendAPI(sender_psid, 'Please insert your name and your birth date. Example: Risky Nugraha, 1980-12-20')
     }
-    console.log('message.nlp',message.nlp)
+    
     // if (entityChosen === 'wit$thanks') {
     //   //send thanks message
     //   callSendAPI(sender_psid, `You're welcome!`);
@@ -218,29 +219,7 @@ const createMessenger = (sender_psid, text) => {
     },
     async (err, res, body) => {
       if (!err) {
-        console.log('res.body:', res.body);
-        // res.on('data', function(data) {
-        //   // compressed data as it is received
-        //   console.log('received ' + data.length + ' bytes of compressed data')
-        // })
-
         const data = JSON.parse(res.body);
-        // console.log('fbid:', data.id)
-        // User.findOne({ where: { fbId: data.id } })
-        //   .then((user) => {
-        //     if (!user) {
-        //       return User.create({
-        //         name: `${data.first_name} ${data.last_name}`,
-        //         fbId: data.id,
-        //       });
-        //     }
-        //   })
-        //   .then(() => {
-        //     console.log('user:', user);
-        //   })
-        //   .catch((err) => {
-        //     console.log('err:', err);
-        //   });
         try {
           // Check (Create if not exist) / Get User from Database
           let user = await User.findOne({ where: { fbId: data.id } });
@@ -251,7 +230,6 @@ const createMessenger = (sender_psid, text) => {
               fbId: data.id,
             });
           }
-          console.log('user:', user);
 
           await Message.create({ UserId: user.id, chat: text });
         } catch (err) {
