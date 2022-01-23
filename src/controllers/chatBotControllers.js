@@ -11,7 +11,7 @@ const postWebHook = (req, res) => {
     body.entry.forEach(function (entry) {
       // Gets the body of the webhook event
       let webhook_event = entry.messaging[0];
-      console.log(webhook_event);
+      console.log('webhook_event:',webhook_event);
 
       // Get the sender PSID
       let sender_psid = webhook_event.sender.id;
@@ -104,7 +104,6 @@ const callSendAPI = (sender_psid, response) => {
 const handleMessage = (sender_psid, message) => {
   //handle message for react, like press like button
   // id like button: sticker_id 369239263222822
-  console.log('message:', message)
 
   if (message && message.attachments && message.attachments[0].payload) {
     callSendAPI(sender_psid, 'Thank you for watching my video !!!');
@@ -116,7 +115,6 @@ const handleMessage = (sender_psid, message) => {
   let entityChosen = '';
   entitiesArr.forEach((name) => {
     let entity = firstTrait(message.nlp, name);
-    console.log('entity:', entity, name)
     if (entity && entity.confidence > 0.8) {
       entityChosen = name;
     }
