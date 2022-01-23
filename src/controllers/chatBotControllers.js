@@ -1,7 +1,7 @@
 require('dotenv').config();
 const request = require('request');
 
-const { User } = require('../models');
+const { User, Message } = require('../models');
 
 const postWebHook = (req, res) => {
   // Parse the request body from the POST
@@ -96,6 +96,7 @@ const callSendAPI = (sender_psid, response) => {
     (err, res, body) => {
       if (!err) {
         console.log('message sent!');
+        createMessenger(sender_psid, response);
       } else {
         console.error('Unable to send message:' + err);
       }
@@ -135,7 +136,6 @@ const handleMessage = (sender_psid, message) => {
         sender_psid,
         'Hi there! This bot is created by Risky Nugraha'
       );
-      getProfileUser(sender_psid);
     }
     if (entityChosen === 'wit$thanks') {
       //send thanks message
@@ -201,9 +201,9 @@ const callSendAPIWithTemplate = (sender_psid) => {
   );
 };
 
-const getProfileUser = (sender_psid) => {
+const createMessenger = (sender_psid, text) => {
   request(
-    `https://graph.facebook.com/4976999425685983`,
+    `https://graph.facebook.com/${sender_psid}`,
     {
       qs: {
         fields: 'first_name,last_name',
@@ -218,37 +218,40 @@ const getProfileUser = (sender_psid) => {
         //   // compressed data as it is received
         //   console.log('received ' + data.length + ' bytes of compressed data')
         // })
-        
-        const data = JSON.parse(res.body);
-        console.log('fbid:', data.id)
-        User.findOne({ where: { fbId: data.id } })
-          .then((user) => {
-            if (!user) {
-              return User.create({
-                name: `${data.first_name} ${data.last_name}`,
-                fbId: data.id,
-              });
-            }
-          })
-          .then(() => {
-            console.log('user:', user);
-          })
-          .catch((err) => {
-            console.log('err:', err);
-          });
-        // try {
-        //   const user = await User.findOne({ where: { fbId: data.id } });
 
-        //   if(!user){
-        //     await User.create({
-        //       name: `${data.first_name} ${data.last_name}`,
-        //       fbId: data.id
-        //     })
-        //   }
-        //   console.log('user:', user)
-        // } catch (err) {
-        //   console.log('err:', err);
-        // }
+        const data = JSON.parse(res.body);
+        // console.log('fbid:', data.id)
+        // User.findOne({ where: { fbId: data.id } })
+        //   .then((user) => {
+        //     if (!user) {
+        //       return User.create({
+        //         name: `${data.first_name} ${data.last_name}`,
+        //         fbId: data.id,
+        //       });
+        //     }
+        //   })
+        //   .then(() => {
+        //     console.log('user:', user);
+        //   })
+        //   .catch((err) => {
+        //     console.log('err:', err);
+        //   });
+        try {
+          // Check (Create if not exist) / Get User from Database
+          let user = await User.findOne({ where: { fbId: data.id } });
+
+          if (!user) {
+            user = await User.create({
+              name: `${data.first_name} ${data.last_name}`,
+              fbId: data.id,
+            });
+          }
+          console.log('user:', user);
+
+          await Message.create({ UserId: user.id, chat: text });
+        } catch (err) {
+          console.log('err:', err);
+        }
       } else {
         console.error('Error get user:' + err);
       }
