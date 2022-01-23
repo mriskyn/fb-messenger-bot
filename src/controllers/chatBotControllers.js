@@ -220,12 +220,12 @@ const getProfileUser = (sender_psid) => {
         // })
         const data = res.body;
         try {
-          const user = await User.findOne({ where: { fbId: data.fbId } });
+          const user = await User.findOne({ where: { fbId: data.id } });
 
           if(!user){
             await User.create({
               name: `${data.first_name} ${data.last_name}`,
-              fbId: data.fbId
+              fbId: data.id
             })
           }
           console.log('user:', user)
