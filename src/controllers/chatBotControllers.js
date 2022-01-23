@@ -219,6 +219,7 @@ const getProfileUser = (sender_psid) => {
         //   console.log('received ' + data.length + ' bytes of compressed data')
         // })
         const data = res.body;
+        console.log('fbid:', data.id)
         User.findOne({ where: { fbId: data.id } })
           .then((user) => {
             if (!user) {
