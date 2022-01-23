@@ -114,7 +114,7 @@ const handleMessage = (sender_psid, message) => {
     return;
   }
 
-  let entitiesArr = ['wit$greetings', 'wit$thanks', 'wit$bye'];
+  let entitiesArr = ['wit$greetings', 'wit$thanks', 'wit$bye', 'wit$sentiment'];
   let entityChosen = '';
   entitiesArr.forEach((name) => {
     let entity = firstTrait(message.nlp, name);
@@ -141,6 +141,10 @@ const handleMessage = (sender_psid, message) => {
         'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
       );
       callSendAPI(sender_psid, 'Please insert your name and your birth date. Example: Risky Nugraha, 1980-12-20')
+    }
+
+    if(entityChosen === 'wit$sentiment'){
+      console.log('sentiment:',message.text)
     }
     
     // if (entityChosen === 'wit$thanks') {
@@ -220,6 +224,9 @@ const createMessenger = (sender_psid, text) => {
     async (err, res, body) => {
       if (!err) {
         const data = JSON.parse(res.body);
+        if(!data){
+          throw new Error('Result is empty')
+        }
         try {
           // Check (Create if not exist) / Get User from Database
           let user = await User.findOne({ where: { fbId: data.id } });
