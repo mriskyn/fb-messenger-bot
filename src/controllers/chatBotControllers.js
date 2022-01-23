@@ -211,8 +211,11 @@ const getProfileUser = (sender_psid) => {
     },
     (err, res, body) => {
       if (!err) {
-        console.log('res:', res);
-        // console.log('body:', body)
+        console.log('res.body:',res.body)
+        res.on('data', function(data) {
+          // compressed data as it is received
+          console.log('received ' + data.length + ' bytes of compressed data')
+        })
       } else {
         console.error('Error get user:' + err);
       }
