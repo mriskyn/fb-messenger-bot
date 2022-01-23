@@ -129,6 +129,7 @@ const handleMessage = (sender_psid, message) => {
 
   if(message.text === 'Please insert your name and your birth date. Example: Risky Nugraha, 1980-12-20'){
     console.log('Ask to count birth date')
+    callSendAPI(sender_psid, 'Do you want to know how many days till his next birthday?')
   }
 
   if (entityChosen === '') {
