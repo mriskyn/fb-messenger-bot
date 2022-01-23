@@ -7,7 +7,7 @@ const chatBotController = require('../controllers/chatBotControllers');
 const initWebRoutes = (app) => {
   router.get('/', homepageController.getHomepage);
   router.get('/webhook', chatBotController.getWebHook);
-  router.port('/webhook', chatBotController.postWebHook);
+  router.post('/webhook', chatBotController.postWebHook);
 
   return app.use('/', router);
 };
