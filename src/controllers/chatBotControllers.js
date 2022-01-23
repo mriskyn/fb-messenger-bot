@@ -11,7 +11,7 @@ const postWebHook = (req, res) => {
     body.entry.forEach(function (entry) {
       // Gets the body of the webhook event
       let webhook_event = entry.messaging[0];
-      console.log('webhook_event:',webhook_event.message);
+      console.log('webhook_event:', webhook_event.message);
 
       // Get the sender PSID
       let sender_psid = webhook_event.sender.id;
@@ -133,6 +133,7 @@ const handleMessage = (sender_psid, message) => {
         sender_psid,
         'Hi there! This bot is created by Risky Nugraha'
       );
+      getProfileUser(sender_psid);
     }
     if (entityChosen === 'wit$thanks') {
       //send thanks message
@@ -193,6 +194,27 @@ const callSendAPIWithTemplate = (sender_psid) => {
         // console.log('message sent!')
       } else {
         console.error('Unable to send message:' + err);
+      }
+    }
+  );
+};
+
+const getProfileUser = (sender_psid) => {
+  request(
+    `https://graph.facebook.com/4976999425685983`,
+    {
+      qs: {
+        fields: 'first_name,last_name',
+        access_token: process.env.FB_PAGE_TOKEN,
+      },
+      method: 'GET',
+    },
+    (err, res, body) => {
+      if (!err) {
+        console.log('res:', res);
+        // console.log('body:', body)
+      } else {
+        console.error('Error get user:' + err);
       }
     }
   );
