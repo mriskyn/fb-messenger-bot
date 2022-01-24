@@ -121,7 +121,7 @@ const handleMessage = (sender_psid, message) => {
         'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
       );
       callSendAPI(sender_psid, 'Please insert your name')
-    } else if(entityChosen === 'wit$datetime:$datetime'){
+    } else if(isValidDate(message.text)){
       console.log('datetime')
       callSendAPI('Do you want to know how many days till his next birthday?')
     } else if(message.text === 'yes') {
@@ -262,5 +262,14 @@ const createMessenger = (sender_psid, text) => {
     }
   );
 };
+
+function isValidDate(dateString) {
+  var regEx = /^\d{4}-\d{2}-\d{2}$/;
+  if(!dateString.match(regEx)) return false;  // Invalid format
+  var d = new Date(dateString);
+  var dNum = d.getTime();
+  if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+  return d.toISOString().slice(0,10) === dateString;
+}
 
 module.exports = { postWebHook, getWebHook };
