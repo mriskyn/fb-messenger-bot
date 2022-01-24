@@ -75,35 +75,6 @@ const handlePostback = (sender_psid, received_postback) => {
   callSendAPI(sender_psid, response);
 };
 
-// Sends response messages via the Send API
-const callSendAPI = (sender_psid, response) => {
-  // Construct the message body
-  let request_body = {
-    recipient: {
-      id: sender_psid,
-    },
-    message: { text: response },
-  };
-
-  // Send the HTTP request to the Messenger Platform
-  request(
-    {
-      uri: 'https://graph.facebook.com/v7.0/me/messages',
-      qs: { access_token: process.env.FB_PAGE_TOKEN },
-      method: 'POST',
-      json: request_body,
-    },
-    (err, res, body) => {
-      if (!err) {
-        console.log('message sent!');
-        // createMessenger(sender_psid, response);
-      } else {
-        console.error('Unable to send message:' + err);
-      }
-    }
-  );
-};
-
 const handleMessage = (sender_psid, message) => {
   //handle message for react, like press like button
   // id like button: sticker_id 369239263222822
@@ -117,19 +88,23 @@ const handleMessage = (sender_psid, message) => {
   let entitiesArr = ['wit$greetings', 'wit$thanks', 'wit$bye', 'wit$sentiment'];
   let entityChosen = '';
   entitiesArr.forEach((name) => {
+    console.log('message.nlp', message.nlp)
+    console.log('name', name)
     let entity = firstTrait(message.nlp, name);
+    console.log('entity:', entity)
     if (entity && entity.confidence > 0.8) {
       entityChosen = name;
     }
   });
 
-  console.log('message.text',message.text)
-  createMessenger(sender_psid, message.text);
-  console.log('message.nlp',message.nlp)
+  // console.log('message.text',message.text)
+  // createMessenger(sender_psid, message.text);
+  // console.log('message.nlp',message.nlp)
 
   if(message.text === 'Please insert your name and your birth date. Example: Risky Nugraha, 1980-12-20'){
-    console.log('Ask to count birth date')
+    // console.log('Ask to count birth date')
     callSendAPI(sender_psid, 'Do you want to know how many days till his next birthday?')
+    return
   }
 
   if (entityChosen === '') {
@@ -158,6 +133,35 @@ const handleMessage = (sender_psid, message) => {
     //   callSendAPI(sender_psid, 'bye-bye!');
     // }
   }
+};
+
+// Sends response messages via the Send API
+const callSendAPI = (sender_psid, response) => {
+  // Construct the message body
+  let request_body = {
+    recipient: {
+      id: sender_psid,
+    },
+    message: { text: response },
+  };
+
+  // Send the HTTP request to the Messenger Platform
+  request(
+    {
+      uri: 'https://graph.facebook.com/v7.0/me/messages',
+      qs: { access_token: process.env.FB_PAGE_TOKEN },
+      method: 'POST',
+      json: request_body,
+    },
+    (err, res, body) => {
+      if (!err) {
+        console.log('message sent!');
+        // createMessenger(sender_psid, response);
+      } else {
+        console.error('Unable to send message:' + err);
+      }
+    }
+  );
 };
 
 const firstTrait = (nlp, name) => {
