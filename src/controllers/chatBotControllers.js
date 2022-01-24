@@ -107,13 +107,13 @@ const handleMessage = (sender_psid, message) => {
   //   return
   // }
 
-  if (entityChosen === '') {
-    //default
-    callSendAPI(
-      sender_psid,
-      `The bot is needed more training, try to say "thanks a lot" or "hi" to the bot`
-    );
-  } else {
+  // if (entityChosen === '') {
+  //   //default
+  //   callSendAPI(
+  //     sender_psid,
+  //     `The bot is needed more training, try to say "thanks a lot" or "hi" to the bot`
+  //   );
+  // } else {
     if (entityChosen === 'wit$greetings') {
       //send greetings message
       callSendAPI(
@@ -140,7 +140,7 @@ const handleMessage = (sender_psid, message) => {
     //   //send bye message
     //   callSendAPI(sender_psid, 'bye-bye!');
     // }
-  }
+  // }
 };
 
 // Sends response messages via the Send API
