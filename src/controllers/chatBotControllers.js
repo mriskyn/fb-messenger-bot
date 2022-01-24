@@ -1,5 +1,7 @@
 require('dotenv').config();
 const request = require('request');
+const {LocalStorage} = require('node-localstorage')
+let localStorage = new LocalStorage('./scratch')
 
 const { User, Message } = require('../models');
 
@@ -127,9 +129,11 @@ const handleMessage = (sender_psid, message) => {
     } else if(message.text === 'yes') {
       callSendAPI(sender_psid, 'There are <N> days left until your next birthday')
     } else if(message.text === 'no') {
-      callSendAPI(sender_psid, 'Goodbye')
+      callSendAPI(sender_psid, 'Goodbye 👋')
     } else {
-      callSendAPI(sender_psid, 'Please insert your birth date. (MM-DD-YYYY)')
+      localStorage.setItem('name', message.text)
+      console.log('ls',localStorage.getItem('name'))
+      callSendAPI(sender_psid, 'Please insert your birth date. (YYYY-MM-DD)')
     }
     
     // if (entityChosen === 'wit$thanks') {
