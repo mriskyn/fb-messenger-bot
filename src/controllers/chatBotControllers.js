@@ -82,41 +82,24 @@ const handleMessage = (sender_psid, message) => {
   //handle message for react, like press like button
   // id like button: sticker_id 369239263222822
 
-  if (message && message.attachments && message.attachments[0].payload) {
-    callSendAPI(sender_psid, 'Thank you for watching my video !!!');
-    callSendAPIWithTemplate(sender_psid);
-    return;
-  }
+  // if (message && message.attachments && message.attachments[0].payload) {
+  //   callSendAPI(sender_psid, 'Thank you for watching my video !!!');
+  //   callSendAPIWithTemplate(sender_psid);
+  //   return;
+  // }
 
-  let entitiesArr = ['wit$greetings', 'wit$thanks', 'wit$bye', 'wit$sentiment'];
+  let entitiesArr = ['wit$greetings', 'wit$thanks', 'wit$bye'];
   let entityChosen = '';
   entitiesArr.forEach((name) => {
-    // console.log('message.nlp', message.nlp)
-    // console.log('name', name)
     let entity = firstTrait(message.nlp, name);
-    // console.log('entity:', entity)
     if (entity && entity.confidence > 0.8) {
       entityChosen = name;
     }
   });
 
-  // console.log('message.text',message.text)
-  // createMessenger(sender_psid, message.text);
-  // console.log('message.nlp',message.nlp)
+  const yesAnswer = ['yes', 'yup', 'yeah', 'ya'];
+  const noAnswer = ['no', 'nope', 'nah'];
 
-  // if(message.text === 'Please insert your name and your birth date. Example: Risky Nugraha, 1980-12-20'){
-  //   // console.log('Ask to count birth date')
-  //   callSendAPI(sender_psid, 'Do you want to know how many days till his next birthday?')
-  //   return
-  // }
-
-  // if (entityChosen === '') {
-  //   //default
-  //   callSendAPI(
-  //     sender_psid,
-  //     `The bot is needed more training, try to say "thanks a lot" or "hi" to the bot`
-  //   );
-  // } else {
   if (entityChosen === 'wit$greetings') {
     //send greetings message
     callSendAPI(
@@ -125,13 +108,12 @@ const handleMessage = (sender_psid, message) => {
     );
     callSendAPI(sender_psid, 'Please insert your name');
   } else if (isValidDate(message.text)) {
-    console.log('datetime');
     localStorage.setItem('birthdate', message.text);
     callSendAPI(
       sender_psid,
       'Do you want to know how many days till his next birthday?'
     );
-  } else if (message.text === 'yes') {
+  } else if (yesAnswer.includes(message.text.toLowerCase())) {
     const birthdate = localStorage.getItem('birthdate');
 
     let [year, month, date] = birthdate.split('-');
@@ -145,23 +127,14 @@ const handleMessage = (sender_psid, message) => {
       sender_psid,
       `There are ${countdown} days left until your next birthday`
     );
-  } else if (message.text === 'no') {
+  } else if (noAnswer.includes(message.text.toLowerCase())) {
     callSendAPI(sender_psid, 'Goodbye 👋');
   } else {
     localStorage.setItem('name', message.text);
-    console.log('ls', localStorage.getItem('name'));
     callSendAPI(sender_psid, 'Please insert your birth date. (YYYY-MM-DD)');
   }
 
-  // if (entityChosen === 'wit$thanks') {
-  //   //send thanks message
-  //   callSendAPI(sender_psid, `You're welcome!`);
-  // }
-  // if (entityChosen === 'wit$bye') {
-  //   //send bye message
-  //   callSendAPI(sender_psid, 'bye-bye!');
-  // }
-  // }
+  createMessenger(sender_psid, message.text);
 };
 
 // Sends response messages via the Send API
@@ -185,7 +158,6 @@ const callSendAPI = (sender_psid, response) => {
     (err, res, body) => {
       if (!err) {
         console.log('message sent!');
-        // createMessenger(sender_psid, response);
       } else {
         console.error('Unable to send message:' + err);
       }
@@ -264,6 +236,7 @@ const createMessenger = (sender_psid, text) => {
         }
         try {
           // Check (Create if not exist) / Get User from Database
+          console.log('fb id', data.id);
           let user = await User.findOne({ where: { fbId: data.id } });
 
           if (!user) {
