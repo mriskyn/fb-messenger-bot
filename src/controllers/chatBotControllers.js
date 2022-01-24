@@ -1,7 +1,8 @@
 require('dotenv').config();
 const request = require('request');
-const {LocalStorage} = require('node-localstorage')
-let localStorage = new LocalStorage('./scratch')
+const moment = require('moment');
+const { LocalStorage } = require('node-localstorage');
+let localStorage = new LocalStorage('./scratch');
 
 const { User, Message } = require('../models');
 
@@ -116,34 +117,50 @@ const handleMessage = (sender_psid, message) => {
   //     `The bot is needed more training, try to say "thanks a lot" or "hi" to the bot`
   //   );
   // } else {
-    if (entityChosen === 'wit$greetings') {
-      //send greetings message
-      callSendAPI(
-        sender_psid,
-        'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
-      );
-      callSendAPI(sender_psid, 'Please insert your name')
-    } else if(isValidDate(message.text)){
-      console.log('datetime')
-      callSendAPI(sender_psid, 'Do you want to know how many days till his next birthday?')
-    } else if(message.text === 'yes') {
-      callSendAPI(sender_psid, 'There are <N> days left until your next birthday')
-    } else if(message.text === 'no') {
-      callSendAPI(sender_psid, 'Goodbye 👋')
-    } else {
-      localStorage.setItem('name', message.text)
-      console.log('ls',localStorage.getItem('name'))
-      callSendAPI(sender_psid, 'Please insert your birth date. (YYYY-MM-DD)')
-    }
-    
-    // if (entityChosen === 'wit$thanks') {
-    //   //send thanks message
-    //   callSendAPI(sender_psid, `You're welcome!`);
-    // }
-    // if (entityChosen === 'wit$bye') {
-    //   //send bye message
-    //   callSendAPI(sender_psid, 'bye-bye!');
-    // }
+  if (entityChosen === 'wit$greetings') {
+    //send greetings message
+    callSendAPI(
+      sender_psid,
+      'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
+    );
+    callSendAPI(sender_psid, 'Please insert your name');
+  } else if (isValidDate(message.text)) {
+    console.log('datetime');
+    localStorage.setItem('birthdate', message.text);
+    callSendAPI(
+      sender_psid,
+      'Do you want to know how many days till his next birthday?'
+    );
+  } else if (message.text === 'yes') {
+    const birthdate = localStorage.getItem('birthdate');
+
+    let [year, month, date] = birthdate.split('-');
+    year = moment().get('year').toString();
+
+    const fullDate = `${year}-${month}-${date}`,
+      currDate = moment(new Date()).format('YYYY-MM-DD'),
+      countdown = moment(fullDate).diff(moment(currDate), 'day');
+
+    callSendAPI(
+      sender_psid,
+      `There are ${countdown} days left until your next birthday`
+    );
+  } else if (message.text === 'no') {
+    callSendAPI(sender_psid, 'Goodbye 👋');
+  } else {
+    localStorage.setItem('name', message.text);
+    console.log('ls', localStorage.getItem('name'));
+    callSendAPI(sender_psid, 'Please insert your birth date. (YYYY-MM-DD)');
+  }
+
+  // if (entityChosen === 'wit$thanks') {
+  //   //send thanks message
+  //   callSendAPI(sender_psid, `You're welcome!`);
+  // }
+  // if (entityChosen === 'wit$bye') {
+  //   //send bye message
+  //   callSendAPI(sender_psid, 'bye-bye!');
+  // }
   // }
 };
 
@@ -242,8 +259,8 @@ const createMessenger = (sender_psid, text) => {
     async (err, res, body) => {
       if (!err) {
         const data = JSON.parse(res.body);
-        if(!data){
-          throw new Error('Result is empty')
+        if (!data) {
+          throw new Error('Result is empty');
         }
         try {
           // Check (Create if not exist) / Get User from Database
@@ -269,11 +286,11 @@ const createMessenger = (sender_psid, text) => {
 
 function isValidDate(dateString) {
   var regEx = /^\d{4}-\d{2}-\d{2}$/;
-  if(!dateString.match(regEx)) return false;  // Invalid format
+  if (!dateString.match(regEx)) return false; // Invalid format
   var d = new Date(dateString);
   var dNum = d.getTime();
-  if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
-  return d.toISOString().slice(0,10) === dateString;
+  if (!dNum && dNum !== 0) return false; // NaN value, Invalid date
+  return d.toISOString().slice(0, 10) === dateString;
 }
 
 module.exports = { postWebHook, getWebHook };
