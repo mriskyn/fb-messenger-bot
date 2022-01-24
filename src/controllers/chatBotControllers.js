@@ -123,11 +123,11 @@ const handleMessage = (sender_psid, message) => {
       callSendAPI(sender_psid, 'Please insert your name')
     } else if(isValidDate(message.text)){
       console.log('datetime')
-      callSendAPI('Do you want to know how many days till his next birthday?')
+      callSendAPI(sender_psid, 'Do you want to know how many days till his next birthday?')
     } else if(message.text === 'yes') {
-      callSendAPI('There are <N> days left until your next birthday')
+      callSendAPI(sender_psid, 'There are <N> days left until your next birthday')
     } else if(message.text === 'no') {
-      callSendAPI('Goodbye')
+      callSendAPI(sender_psid, 'Goodbye')
     } else {
       callSendAPI(sender_psid, 'Please insert your birth date. (MM-DD-YYYY)')
     }
