@@ -88,10 +88,10 @@ const handleMessage = (sender_psid, message) => {
   let entitiesArr = ['wit$greetings', 'wit$thanks', 'wit$bye', 'wit$sentiment'];
   let entityChosen = '';
   entitiesArr.forEach((name) => {
-    console.log('message.nlp', message.nlp)
-    console.log('name', name)
+    // console.log('message.nlp', message.nlp)
+    // console.log('name', name)
     let entity = firstTrait(message.nlp, name);
-    console.log('entity:', entity)
+    // console.log('entity:', entity)
     if (entity && entity.confidence > 0.8) {
       entityChosen = name;
     }
@@ -101,11 +101,11 @@ const handleMessage = (sender_psid, message) => {
   // createMessenger(sender_psid, message.text);
   // console.log('message.nlp',message.nlp)
 
-  if(message.text === 'Please insert your name and your birth date. Example: Risky Nugraha, 1980-12-20'){
-    // console.log('Ask to count birth date')
-    callSendAPI(sender_psid, 'Do you want to know how many days till his next birthday?')
-    return
-  }
+  // if(message.text === 'Please insert your name and your birth date. Example: Risky Nugraha, 1980-12-20'){
+  //   // console.log('Ask to count birth date')
+  //   callSendAPI(sender_psid, 'Do you want to know how many days till his next birthday?')
+  //   return
+  // }
 
   if (entityChosen === '') {
     //default
@@ -120,9 +120,17 @@ const handleMessage = (sender_psid, message) => {
         sender_psid,
         'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
       );
-      callSendAPI(sender_psid, 'Please insert your name and your birth date. Example: Risky Nugraha, 1980-12-20')
+      callSendAPI(sender_psid, 'Please insert your name')
+    } else if(entityChosen === 'wit$datetime:$datetime'){
+      console.log('datetime')
+      callSendAPI('Do you want to know how many days till his next birthday?')
+    } else if(message.text === 'yes') {
+      callSendAPI('There are <N> days left until your next birthday')
+    } else if(message.text === 'no') {
+      callSendAPI('Goodbye')
+    } else {
+      callSendAPI(sender_psid, 'Please insert your birth date. (MM-DD-YYYY)')
     }
-
     
     // if (entityChosen === 'wit$thanks') {
     //   //send thanks message
