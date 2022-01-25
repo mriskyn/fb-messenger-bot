@@ -1,0 +1,78 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Facebook Chat Bot",
+    "contact": {},
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8888/api",
+      "variables": {}
+    }
+  ],
+  "paths": {
+    "/summary": {
+      "get": {
+        "tags": ["Misc"],
+        "summary": "Summary",
+        "operationId": "Summary",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/message": {
+      "get": {
+        "tags": ["Misc"],
+        "summary": "All Messages",
+        "operationId": "AllMessages",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/message/{id}": {
+      "get": {
+        "tags": ["Misc"],
+        "summary": "Specify Message",
+        "operationId": "SpecifyMessage",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        },
+        "deprecated": false
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Misc",
+      "description": ""
+    }
+  ]
+}
