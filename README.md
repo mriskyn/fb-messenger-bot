@@ -65,3 +65,7 @@ $ heroku config:set FB_PAGE_TOKEN=<YOUR_FB_PAGE_TOKEN>
 
 - Create a Facebook App
 - Config [webhook](https://developers.facebook.com/docs/messenger-platform)
+
+## API Documentation
+
+To Access the documentation => `localhost:8888/api-docs`
