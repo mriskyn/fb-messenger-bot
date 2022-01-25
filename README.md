@@ -2,11 +2,11 @@
 
 - A simple Facebook Messenger Chatbot using Mesenger Platform (Node.js)
 - Test this bot (this project) now : https://ryz-fb-messenger-bot.herokuapp.com/
-- Guide to set up this project: link
+- Make sure you'are using your facebook account to test the bot
 
 ## How to run this project ?
 
-You can set up this project by following these steps below or an easier way, I created a video to set up this project ( Watch my video: link )
+You can set up this project by following these steps below or an easier way.
 
 ### 1. Clone this project
 
