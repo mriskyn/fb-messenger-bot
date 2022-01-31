@@ -181,13 +181,18 @@ const inputUser = async (sender_psid, message) => {
         }
 
         try {
-          let text = message.text
+          let text = message.text;
           let input = await Input.findOne({
             facebook_id: sender_psid,
             isActivate: true,
           });
 
-          let entitiesArr = ['wit$greetings', 'wit$thanks', 'wit$bye', 'wit$datetime:$datetime'];
+          let entitiesArr = [
+            'wit$greetings',
+            'wit$thanks',
+            'wit$bye',
+            'wit$datetime:$datetime',
+          ];
           let entityChosen = '';
           entitiesArr.forEach((name) => {
             let entity = firstTrait(message.nlp, name);
@@ -197,7 +202,6 @@ const inputUser = async (sender_psid, message) => {
           });
 
           if (!input) {
-
             if (entityChosen === 'wit$greetings') {
               callSendAPI(
                 sender_psid,
@@ -210,15 +214,23 @@ const inputUser = async (sender_psid, message) => {
             }
           } else {
             if (input.flow === 'name') {
-              callSendAPI(
-                sender_psid,
-                'Please insert your birth date. (YYYY-MM-DD)'
-              );
-              input.name = text;
-              input.flow = 'birthdate';
-              await input.save();
+              if (
+                entityChosen === 'wit$greetings' ||
+                entityChosen === 'wit$bye' ||
+                entityChosen === 'wit$thanks'
+              ) {
+                callSendAPI(sender_psid, 'Please valid name');
+              } else {
+                callSendAPI(
+                  sender_psid,
+                  'Please insert your birth date. (YYYY-MM-DD)'
+                );
+                input.name = text;
+                input.flow = 'birthdate';
+                await input.save();
+              }
             } else if (input.flow === 'birthdate') {
-              console.log('entityChosen:',entityChosen)
+              console.log('entityChosen:', entityChosen);
               callSendAPI(
                 sender_psid,
                 'Do you want to know how many days till his next birthday?'
