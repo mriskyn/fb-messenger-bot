@@ -44,7 +44,7 @@ const handleMessage = (sender_psid, message) => {
       'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
     );
     callSendAPI(sender_psid, 'Please insert your name');
-    inputUser(null, 'intro')
+    // inputUser(null, 'intro')
   } else if (isValidDate(message.text)) {
     localStorage.setItem('birthdate', message.text);
     inputUser(message.text, 'birthdate');
@@ -148,16 +148,17 @@ const createMessenger = (sender_psid, text) => {
 const inputUser = async (text, flow) => {
   try {
     // const result = await Input.create()
-    if (flow === 'intro') {
-      await Input.create();
-    }
+    // if (flow === 'intro') {
+    //   await Input.create();
+    // }
 
+    console.log(flow)
     if (flow === 'name') {
-      const input = await Input.find().sort({ date: 'desc' });
+      const input = await Input.create({name: text});
       console.log('inpt', input);
-      input[0].flow = 'name';
-      input[0].name = text;
-      await input.save();
+      // input[0].flow = 'name';
+      // input[0].name = text;
+      // await input.save();
     }
 
     if (flow === 'birthdate') {

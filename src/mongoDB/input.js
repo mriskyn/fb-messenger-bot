@@ -10,7 +10,7 @@ const InputSchema = new mongoose.Schema({
   flow: {
     type: String,
     enum: ['name', 'birthdate', 'done'],
-    // default: 'user',
+    default: 'name',
   },
   date: {
     type: Date,
