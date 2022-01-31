@@ -209,8 +209,10 @@ const inputUser = async (sender_psid, message) => {
               );
               callSendAPI(sender_psid, 'Please insert your name');
               input = await Input.create({ facebook_id: sender_psid });
+              return;
             } else {
               callSendAPI(sender_psid, 'Say "Hi" to start the conversation');
+              return;
             }
           } else {
             if (input.flow === 'name') {
@@ -219,7 +221,8 @@ const inputUser = async (sender_psid, message) => {
                 entityChosen === 'wit$bye' ||
                 entityChosen === 'wit$thanks'
               ) {
-                callSendAPI(sender_psid, 'Please valid name');
+                callSendAPI(sender_psid, 'Please input valid name');
+                return;
               } else {
                 callSendAPI(
                   sender_psid,
@@ -228,9 +231,9 @@ const inputUser = async (sender_psid, message) => {
                 input.name = text;
                 input.flow = 'birthdate';
                 await input.save();
+                return;
               }
             } else if (input.flow === 'birthdate') {
-              console.log('entityChosen:', entityChosen);
               callSendAPI(
                 sender_psid,
                 'Do you want to know how many days till his next birthday?'
@@ -238,12 +241,15 @@ const inputUser = async (sender_psid, message) => {
               input.birthdate = text;
               input.flow = 'done';
               await input.save();
+              return;
             } else {
               if (input.flow === 'done' && text === 'no') {
                 callSendAPI(sender_psid, 'Goodbye 👋');
                 input.isActivate = false;
                 await input.save();
+                return;
               }
+
               if (input.flow === 'done' && text === 'yes') {
                 callSendAPI(
                   sender_psid,
@@ -251,8 +257,13 @@ const inputUser = async (sender_psid, message) => {
                 );
                 input.isActivate = false;
                 await input.save();
+                return;
               }
             }
+          }
+
+          if (input.flow) {
+            console.log('flow', input.flow);
           }
 
           // console.log('input:', input);
