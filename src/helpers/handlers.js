@@ -37,7 +37,7 @@ const handleMessage = (sender_psid, message) => {
   const yesAnswer = ['yes', 'yup', 'yeah', 'ya'];
   const noAnswer = ['no', 'nope', 'nah'];
 
-  inputUser(sender_psid, message.text);
+  inputUser(sender_psid, message);
 
   // Input.find().sort({date: 'desc'}).then(res => {
   //   console.log(res)
@@ -163,7 +163,7 @@ const createMessenger = (sender_psid, text) => {
   );
 };
 
-const inputUser = async (sender_psid, text) => {
+const inputUser = async (sender_psid, message) => {
   request(
     `https://graph.facebook.com/${sender_psid}`,
     {
@@ -181,6 +181,7 @@ const inputUser = async (sender_psid, text) => {
         }
 
         try {
+          let text = message.text
           let input = await Input.findOne({
             facebook_id: sender_psid,
             isActivate: true,
