@@ -9,7 +9,7 @@ const InputSchema = new mongoose.Schema({
   },
   flow: {
     type: String,
-    enum: ['name', 'birthdate', 'done'],
+    enum: ['name', 'birthdate', 'done', 'intro'],
     default: 'name',
   },
   date: {

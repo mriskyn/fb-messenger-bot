@@ -37,42 +37,58 @@ const handleMessage = (sender_psid, message) => {
   const yesAnswer = ['yes', 'yup', 'yeah', 'ya'];
   const noAnswer = ['no', 'nope', 'nah'];
 
-  if (entityChosen === 'wit$greetings') {
-    //send greetings message
-    callSendAPI(
-      sender_psid,
-      'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
-    );
-    callSendAPI(sender_psid, 'Please insert your name');
-    // inputUser(null, 'intro')
-  } else if (isValidDate(message.text)) {
-    localStorage.setItem('birthdate', message.text);
-    inputUser(message.text, 'birthdate');
-    callSendAPI(
-      sender_psid,
-      'Do you want to know how many days till his next birthday?'
-    );
-  } else if (yesAnswer.includes(message.text.toLowerCase())) {
-    const birthdate = localStorage.getItem('birthdate');
+  Input.find().sort({date: 'desc'}).then(res => {
+    console.log(res)
+    if (entityChosen === 'wit$greetings') {
+      callSendAPI(
+        sender_psid,
+        'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
+      );
+      callSendAPI(sender_psid, 'Please insert your name');
+      inputUser(sender_psid, null);z
+    } else {
+  
+    }
+  })
 
-    let [year, month, date] = birthdate.split('-');
-    year = moment().get('year').toString();
+  // if (entityChosen === 'wit$greetings') {
+  //   //send greetings message
+  //   callSendAPI(
+  //     sender_psid,
+  //     'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
+  //   );
+  //   callSendAPI(sender_psid, 'Please insert your name');
+  //   // inputUser(null, 'intro')
+  // } else if (isValidDate(message.text)) {
+  //   localStorage.setItem('birthdate', message.text);
+  //   inputUser(message.text, 'birthdate');
+  //   callSendAPI(
+  //     sender_psid,
+  //     'Do you want to know how many days till his next birthday?'
+  //   );
+  // } else if (yesAnswer.includes(message.text.toLowerCase())) {
+  //   const birthdate = localStorage.getItem('birthdate');
 
-    const fullDate = `${year}-${month}-${date}`,
-      currDate = moment(new Date()).format('YYYY-MM-DD'),
-      countdown = moment(fullDate).diff(moment(currDate), 'day');
+  //   let [year, month, date] = birthdate.split('-');
+  //   year = moment().get('year').toString();
 
-    callSendAPI(
-      sender_psid,
-      `There are ${countdown} days left until your next birthday`
-    );
-  } else if (noAnswer.includes(message.text.toLowerCase())) {
-    callSendAPI(sender_psid, 'Goodbye 👋');
-  } else {
-    localStorage.setItem('name', message.text);
-    inputUser(message.text, 'name');
-    callSendAPI(sender_psid, 'Please insert your birth date. (YYYY-MM-DD)');
-  }
+  //   const fullDate = `${year}-${month}-${date}`,
+  //     currDate = moment(new Date()).format('YYYY-MM-DD'),
+  //     countdown = moment(fullDate).diff(moment(currDate), 'day');
+
+  //   callSendAPI(
+  //     sender_psid,
+  //     `There are ${countdown} days left until your next birthday`
+  //   );
+  // } else if (noAnswer.includes(message.text.toLowerCase())) {
+  //   callSendAPI(sender_psid, 'Goodbye 👋');
+  // } else {
+  //   localStorage.setItem('name', message.text);
+  //   inputUser(message.text, 'name');
+  //   callSendAPI(sender_psid, 'Please insert your birth date. (YYYY-MM-DD)');
+  // }
+
+  // inputUser()
 
   createMessenger(sender_psid, message.text);
 };
@@ -124,7 +140,7 @@ const createMessenger = (sender_psid, text) => {
 
         try {
           // Check (Create if not exist) / Get User from Database
-          console.log('fb id', data.id);
+          // console.log('fb id', data.id);
           let user = await User.findOne({ where: { fbId: data.id } });
 
           if (!user) {
@@ -145,31 +161,33 @@ const createMessenger = (sender_psid, text) => {
   );
 };
 
-const inputUser = async (text, flow) => {
-  try {
-    // const result = await Input.create()
-    // if (flow === 'intro') {
-    //   await Input.create();
-    // }
+const inputUser = async (sender_psid, text, flow) => {
+  request(
+    `https://graph.facebook.com/${sender_psid}`,
+    {
+      qs: {
+        fields: 'first_name,last_name',
+        access_token: process.env.FB_PAGE_TOKEN,
+      },
+      method: 'GET',
+    },
+    async (err, res, body) => {
+      if (!err) {
+        const data = JSON.parse(res.body);
+        if (!data?.id) {
+          throw new Error('Wrong PSID');
+        }
 
-    console.log(flow)
-    if (flow === 'name') {
-      const input = await Input.create({name: text});
-      console.log('inpt', input);
-      // input[0].flow = 'name';
-      // input[0].name = text;
-      // await input.save();
+        try {
+          await Input.create();
+        } catch (err) {
+          console.log('err:', err);
+        }
+      } else {
+        console.error('Error get user:' + err);
+      }
     }
-
-    if (flow === 'birthdate') {
-      const input = await Input.find().sort({ date: 'desc' });
-      input[0].flow = 'birthdate';
-      input[0].birthdate = text;
-      await input.save();
-    }
-  } catch (err) {
-    console.log('err:', err);
-  }
+  );
 };
 
 module.exports = { handleMessage, handlePostback };
