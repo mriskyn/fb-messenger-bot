@@ -187,15 +187,16 @@ const inputUser = async (sender_psid, message) => {
             isActivate: true,
           });
 
+          let entitiesArr = ['wit$greetings', 'wit$thanks', 'wit$bye', 'wit$datetime:$datetime'];
+          let entityChosen = '';
+          entitiesArr.forEach((name) => {
+            let entity = firstTrait(message.nlp, name);
+            if (entity && entity.confidence > 0.8) {
+              entityChosen = name;
+            }
+          });
+
           if (!input) {
-            let entitiesArr = ['wit$greetings', 'wit$thanks', 'wit$bye'];
-            let entityChosen = '';
-            entitiesArr.forEach((name) => {
-              let entity = firstTrait(message.nlp, name);
-              if (entity && entity.confidence > 0.8) {
-                entityChosen = name;
-              }
-            });
 
             if (entityChosen === 'wit$greetings') {
               callSendAPI(
@@ -217,6 +218,7 @@ const inputUser = async (sender_psid, message) => {
               input.flow = 'birthdate';
               await input.save();
             } else if (input.flow === 'birthdate') {
+              console.log(entityChosen)
               callSendAPI(
                 sender_psid,
                 'Do you want to know how many days till his next birthday?'
