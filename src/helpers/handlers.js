@@ -181,15 +181,31 @@ const inputUser = async (sender_psid, text) => {
         }
 
         try {
-          let input = await Input.findOne({ facebook_id: sender_psid, isActivate: true });
+          let input = await Input.findOne({
+            facebook_id: sender_psid,
+            isActivate: true,
+          });
 
           if (!input) {
-            callSendAPI(
-              sender_psid,
-              'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
-            );
-            callSendAPI(sender_psid, 'Please insert your name');
-            input = await Input.create({ facebook_id: sender_psid });
+            let entitiesArr = ['wit$greetings', 'wit$thanks', 'wit$bye'];
+            let entityChosen = '';
+            entitiesArr.forEach((name) => {
+              let entity = firstTrait(message.nlp, name);
+              if (entity && entity.confidence > 0.8) {
+                entityChosen = name;
+              }
+            });
+
+            if (entityChosen === 'wit$greetings') {
+              callSendAPI(
+                sender_psid,
+                'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
+              );
+              callSendAPI(sender_psid, 'Please insert your name');
+              input = await Input.create({ facebook_id: sender_psid });
+            } else {
+              callSendAPI(sender_psid, 'Say "Hi" to start the conversation');
+            }
           } else {
             if (input.flow === 'name') {
               callSendAPI(
@@ -213,13 +229,18 @@ const inputUser = async (sender_psid, text) => {
                 input.isActivate = false;
                 await input.save();
               }
-              if(input.flow === 'done' && text === 'yes'){
-                
+              if (input.flow === 'done' && text === 'yes') {
+                callSendAPI(
+                  sender_psid,
+                  `There are countdown days left until your next birthday`
+                );
+                input.isActivate = false;
+                await input.save();
               }
             }
           }
 
-          console.log('input:', input);
+          // console.log('input:', input);
         } catch (err) {
           console.log('err:', err);
         }
