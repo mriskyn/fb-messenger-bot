@@ -45,7 +45,7 @@ const handleMessage = (sender_psid, message) => {
         'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
       );
       callSendAPI(sender_psid, 'Please insert your name');
-      inputUser(sender_psid, null);z
+      inputUser(sender_psid, null);
     } else {
   
     }
