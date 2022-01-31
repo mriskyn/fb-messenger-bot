@@ -186,17 +186,18 @@ const inputUser = async (sender_psid, text) => {
           });
           if (!input) {
             input = await Input.create({ facebook_id: sender_psid });
-            return;
+          } else {
+            if (input.flow === 'name') {
+              input.name = text;
+              input.flow = 'birthdate';
+              await input.save();
+            } else if (input.flow === 'birthdate') {
+              input.birthdate = text;
+              input.flow = 'done';
+              await input.save();
+            }
           }
 
-          if (input.flow === 'name') {
-            input.name = text;
-            input.flow = 'birthdate';
-            await input.save();
-          } else if (input.flow === 'birthdate') {
-            input.birthdate = text;
-            input.flow = 'done'
-          }
           console.log('input:', input);
         } catch (err) {
           console.log('err:', err);
