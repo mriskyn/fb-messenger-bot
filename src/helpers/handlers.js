@@ -37,7 +37,7 @@ const handleMessage = (sender_psid, message) => {
   const yesAnswer = ['yes', 'yup', 'yeah', 'ya'];
   const noAnswer = ['no', 'nope', 'nah'];
 
-  inputUser(sender_psid)
+  inputUser(sender_psid, message.text);
 
   // Input.find().sort({date: 'desc'}).then(res => {
   //   console.log(res)
@@ -49,7 +49,7 @@ const handleMessage = (sender_psid, message) => {
   //     callSendAPI(sender_psid, 'Please insert your name');
   //     inputUser(sender_psid, null);
   //   } else {
-  
+
   //   }
   // })
 
@@ -163,7 +163,7 @@ const createMessenger = (sender_psid, text) => {
   );
 };
 
-const inputUser = async (sender_psid) => {
+const inputUser = async (sender_psid, text) => {
   request(
     `https://graph.facebook.com/${sender_psid}`,
     {
@@ -181,8 +181,23 @@ const inputUser = async (sender_psid) => {
         }
 
         try {
-          const input = await Input.create({facebook_id: sender_psid});
-          console.log('input:', input)
+          let input = await Input.findOne({
+            where: { facebook_id: sender_psid },
+          });
+          if (!input) {
+            input = await Input.create({ facebook_id: sender_psid });
+            return;
+          }
+
+          if (input.flow === 'name') {
+            input.name = text;
+            input.flow = 'birthdate';
+            await input.save();
+          } else if (input.flow === 'birthdate') {
+            input.birthdate = text;
+            input.flow = 'done'
+          }
+          console.log('input:', input);
         } catch (err) {
           console.log('err:', err);
         }
