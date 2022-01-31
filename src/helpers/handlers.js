@@ -181,20 +181,36 @@ const inputUser = async (sender_psid, text) => {
         }
 
         try {
-          let input = await Input.findOne({
-            where: { facebook_id: sender_psid },
-          });
+          let input = await Input.findOne({ facebook_id: sender_psid });
           if (!input) {
+            callSendAPI(
+              sender_psid,
+              'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
+            );
+            callSendAPI(sender_psid, 'Please insert your name');
             input = await Input.create({ facebook_id: sender_psid });
           } else {
             if (input.flow === 'name') {
+              callSendAPI(
+                sender_psid,
+                'Please insert your birth date. (YYYY-MM-DD)'
+              );
               input.name = text;
               input.flow = 'birthdate';
               await input.save();
             } else if (input.flow === 'birthdate') {
+              callSendAPI(
+                sender_psid,
+                'Do you want to know how many days till his next birthday?'
+              );
               input.birthdate = text;
               input.flow = 'done';
               await input.save();
+            } else {
+              if (input.flow === 'done' && text === 'no') {
+                callSendAPI(sender_psid, 'Goodbye 👋');
+              }
+              // if(input.flow === 'done' && tex)
             }
           }
 
