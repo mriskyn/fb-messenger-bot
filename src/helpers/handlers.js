@@ -218,7 +218,7 @@ const inputUser = async (sender_psid, message) => {
               input.flow = 'birthdate';
               await input.save();
             } else if (input.flow === 'birthdate') {
-              console.log(entityChosen)
+              console.log('entityChosen:',entityChosen)
               callSendAPI(
                 sender_psid,
                 'Do you want to know how many days till his next birthday?'
