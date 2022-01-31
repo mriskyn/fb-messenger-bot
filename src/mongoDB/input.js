@@ -18,6 +18,10 @@ const InputSchema = new mongoose.Schema({
   },
   facebook_id: {
     type: String
+  },
+  isActivate: {
+    type: Boolean,
+    default: true
   }
 });
 

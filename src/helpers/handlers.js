@@ -181,7 +181,8 @@ const inputUser = async (sender_psid, text) => {
         }
 
         try {
-          let input = await Input.findOne({ facebook_id: sender_psid });
+          let input = await Input.findOne({ facebook_id: sender_psid, isActivate: true });
+
           if (!input) {
             callSendAPI(
               sender_psid,
@@ -209,8 +210,12 @@ const inputUser = async (sender_psid, text) => {
             } else {
               if (input.flow === 'done' && text === 'no') {
                 callSendAPI(sender_psid, 'Goodbye 👋');
+                input.isActivate = false;
+                await input.save();
               }
-              // if(input.flow === 'done' && tex)
+              if(input.flow === 'done' && text === 'yes'){
+                
+              }
             }
           }
 
