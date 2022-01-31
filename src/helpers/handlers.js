@@ -5,6 +5,7 @@ const { LocalStorage } = require('node-localstorage');
 const localStorage = new LocalStorage('./scratch');
 
 const { User, Message } = require('../models');
+const Input = require('../mongoDB/input');
 const { firstTrait, isValidDate } = require('./validate');
 
 const handlePostback = (sender_psid, received_postback) => {
@@ -141,5 +142,30 @@ const createMessenger = (sender_psid, text) => {
   );
 };
 
+const inputUser = async (sender_psid, text, flow) => {
+  try {
+    // const result = await Input.create()
+    if (flow === 'intro') {
+      await Input.create();
+    }
+
+    if (flow === 'name') {
+      const input = await Input.find().sort({ date: 'desc' });
+      console.log('inpt', input)
+      input[0].flow = 'name';
+      input[0].name = text;
+      await input.save();
+    }
+
+    if (flow === 'birthdate') {
+      const input = await Input.find().sort({ date: 'desc' });
+      input[0].flow = 'birthdate';
+      input[0].birthdate = text;
+      await input.save();
+    }
+  } catch (err) {
+    console.log('err:', err);
+  }
+};
 
 module.exports = { handleMessage, handlePostback };
