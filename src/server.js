@@ -6,6 +6,7 @@ const viwEngine = require('./config/viewEngine');
 const { sequelize } = require('./models');
 const initWebRoutes = require('./routes/web');
 const swaggerDocs = require('./docs');
+const connectMongo = require('./db/connectMongo')
 
 const app = express();
 const PORT = process.env.PORT || 8888;
@@ -29,6 +30,7 @@ initWebRoutes(app);
 
 async function main() {
   try {
+    await connectMongo(process.env.MONGO_URL)
     await sequelize.sync({ alter: true });
   } catch (err) {
     console.log('err:', err);
