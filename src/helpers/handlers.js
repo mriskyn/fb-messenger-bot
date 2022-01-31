@@ -46,6 +46,7 @@ const handleMessage = (sender_psid, message) => {
     callSendAPI(sender_psid, 'Please insert your name');
   } else if (isValidDate(message.text)) {
     localStorage.setItem('birthdate', message.text);
+    inputUser(message.text, 'birthdate');
     callSendAPI(
       sender_psid,
       'Do you want to know how many days till his next birthday?'
@@ -68,6 +69,7 @@ const handleMessage = (sender_psid, message) => {
     callSendAPI(sender_psid, 'Goodbye 👋');
   } else {
     localStorage.setItem('name', message.text);
+    inputUser(message.text, 'name');
     callSendAPI(sender_psid, 'Please insert your birth date. (YYYY-MM-DD)');
   }
 
@@ -142,7 +144,7 @@ const createMessenger = (sender_psid, text) => {
   );
 };
 
-const inputUser = async (sender_psid, text, flow) => {
+const inputUser = async (text, flow) => {
   try {
     // const result = await Input.create()
     if (flow === 'intro') {
@@ -151,7 +153,7 @@ const inputUser = async (sender_psid, text, flow) => {
 
     if (flow === 'name') {
       const input = await Input.find().sort({ date: 'desc' });
-      console.log('inpt', input)
+      console.log('inpt', input);
       input[0].flow = 'name';
       input[0].name = text;
       await input.save();
