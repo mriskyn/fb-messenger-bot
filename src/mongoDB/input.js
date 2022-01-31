@@ -15,6 +15,9 @@ const InputSchema = new mongoose.Schema({
   date: {
     type: Date,
     default: new Date()
+  },
+  facebook_id: {
+    type: String
   }
 });
 

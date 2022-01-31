@@ -37,19 +37,21 @@ const handleMessage = (sender_psid, message) => {
   const yesAnswer = ['yes', 'yup', 'yeah', 'ya'];
   const noAnswer = ['no', 'nope', 'nah'];
 
-  Input.find().sort({date: 'desc'}).then(res => {
-    console.log(res)
-    if (entityChosen === 'wit$greetings') {
-      callSendAPI(
-        sender_psid,
-        'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
-      );
-      callSendAPI(sender_psid, 'Please insert your name');
-      inputUser(sender_psid, null);
-    } else {
+  inputUser(sender_psid)
+
+  // Input.find().sort({date: 'desc'}).then(res => {
+  //   console.log(res)
+  //   if (entityChosen === 'wit$greetings') {
+  //     callSendAPI(
+  //       sender_psid,
+  //       'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
+  //     );
+  //     callSendAPI(sender_psid, 'Please insert your name');
+  //     inputUser(sender_psid, null);
+  //   } else {
   
-    }
-  })
+  //   }
+  // })
 
   // if (entityChosen === 'wit$greetings') {
   //   //send greetings message
@@ -161,7 +163,7 @@ const createMessenger = (sender_psid, text) => {
   );
 };
 
-const inputUser = async (sender_psid, text, flow) => {
+const inputUser = async (sender_psid) => {
   request(
     `https://graph.facebook.com/${sender_psid}`,
     {
@@ -179,7 +181,8 @@ const inputUser = async (sender_psid, text, flow) => {
         }
 
         try {
-          await Input.create();
+          const input = await Input.create({facebook_id: sender_psid});
+          console.log('input:', input)
         } catch (err) {
           console.log('err:', err);
         }
