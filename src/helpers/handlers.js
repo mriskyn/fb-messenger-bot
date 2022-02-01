@@ -251,22 +251,36 @@ const inputUser = async (sender_psid, message) => {
               }
 
               if (input.flow === 'done' && text === 'yes') {
-                callSendAPI(
-                  sender_psid,
-                  `There are countdown days left until your next birthday`
-                );
+                let birthdate = input.birthdate;
+                let [year, month, date] = birthdate.split('-');
+                year = moment().get('year').toString();
+
+                const fullDate = `${year}-${month}-${date}`,
+                  currDate = moment(new Date()).format('YYYY-MM-DD');
+
+                let countdown = moment(fullDate).diff(moment(currDate), 'day');
+
+                if (countdown < 0) {
+                  countdown = countdown + 365;
+                }
+
+                if (countdown === 0) {
+                  callSendAPI(sender_psid, 'Happy Birthday!!!');
+                } else {
+                  callSendAPI(
+                    sender_psid,
+                    `There are ${
+                      countdown ? countdown : 'n'
+                    } days left until your next birthday`
+                  );
+                }
+
                 input.isActivate = false;
                 await input.save();
                 return;
               }
             }
           }
-
-          if (input.flow) {
-            console.log('flow', input.flow);
-          }
-
-          // console.log('input:', input);
         } catch (err) {
           console.log('err:', err);
         }
