@@ -234,14 +234,19 @@ const inputUser = async (sender_psid, message) => {
                 return;
               }
             } else if (input.flow === 'birthdate') {
-              callSendAPI(
-                sender_psid,
-                'Do you want to know how many days till his next birthday?'
-              );
-              input.birthdate = text;
-              input.flow = 'done';
-              await input.save();
-              return;
+              if (isValidDate(text)) {
+                callSendAPI(
+                  sender_psid,
+                  'Do you want to know how many days till his next birthday?'
+                );
+                input.birthdate = text;
+                input.flow = 'done';
+                await input.save();
+                return;
+              } else {
+                callSendAPI('Please input valid date');
+                return;
+              }
             } else {
               if (input.flow === 'done' && text === 'no') {
                 callSendAPI(sender_psid, 'Goodbye 👋');
