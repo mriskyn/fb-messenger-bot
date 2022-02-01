@@ -205,7 +205,10 @@ const inputUser = async (sender_psid, message) => {
           console.log('text:', text);
 
           if (!input) {
-            if (entityChosen === 'wit$greetings') {
+            if (
+              entityChosen === 'wit$greetings' ||
+              text.toLowerCase() === 'hi'
+            ) {
               callSendAPI(
                 sender_psid,
                 'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
