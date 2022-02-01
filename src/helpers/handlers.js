@@ -201,6 +201,9 @@ const inputUser = async (sender_psid, message) => {
             }
           });
 
+          console.log('entity choosen', entityChosen);
+          console.log('text:', text);
+
           if (!input) {
             if (entityChosen === 'wit$greetings') {
               callSendAPI(
