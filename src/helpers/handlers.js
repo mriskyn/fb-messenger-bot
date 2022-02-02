@@ -1,8 +1,5 @@
 const request = require('request');
 const moment = require('moment');
-const { LocalStorage } = require('node-localstorage');
-
-const localStorage = new LocalStorage('./scratch');
 
 const { User, Message } = require('../models');
 const Input = require('../mongoDB/input');
@@ -25,73 +22,10 @@ const handlePostback = (sender_psid, received_postback) => {
 };
 
 const handleMessage = (sender_psid, message) => {
-  let entitiesArr = ['wit$greetings', 'wit$thanks', 'wit$bye'];
-  let entityChosen = '';
-  entitiesArr.forEach((name) => {
-    let entity = firstTrait(message.nlp, name);
-    if (entity && entity.confidence > 0.8) {
-      entityChosen = name;
-    }
-  });
-
-  const yesAnswer = ['yes', 'yup', 'yeah', 'ya'];
-  const noAnswer = ['no', 'nope', 'nah'];
-
+  // User Chat flow
   inputUser(sender_psid, message);
 
-  // Input.find().sort({date: 'desc'}).then(res => {
-  //   console.log(res)
-  //   if (entityChosen === 'wit$greetings') {
-  //     callSendAPI(
-  //       sender_psid,
-  //       'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
-  //     );
-  //     callSendAPI(sender_psid, 'Please insert your name');
-  //     inputUser(sender_psid, null);
-  //   } else {
-
-  //   }
-  // })
-
-  // if (entityChosen === 'wit$greetings') {
-  //   //send greetings message
-  //   callSendAPI(
-  //     sender_psid,
-  //     'Hi there! I am Ryz Chat Bot, a message app that can reply automatically'
-  //   );
-  //   callSendAPI(sender_psid, 'Please insert your name');
-  //   // inputUser(null, 'intro')
-  // } else if (isValidDate(message.text)) {
-  //   localStorage.setItem('birthdate', message.text);
-  //   inputUser(message.text, 'birthdate');
-  //   callSendAPI(
-  //     sender_psid,
-  //     'Do you want to know how many days till his next birthday?'
-  //   );
-  // } else if (yesAnswer.includes(message.text.toLowerCase())) {
-  //   const birthdate = localStorage.getItem('birthdate');
-
-  //   let [year, month, date] = birthdate.split('-');
-  //   year = moment().get('year').toString();
-
-  //   const fullDate = `${year}-${month}-${date}`,
-  //     currDate = moment(new Date()).format('YYYY-MM-DD'),
-  //     countdown = moment(fullDate).diff(moment(currDate), 'day');
-
-  //   callSendAPI(
-  //     sender_psid,
-  //     `There are ${countdown} days left until your next birthday`
-  //   );
-  // } else if (noAnswer.includes(message.text.toLowerCase())) {
-  //   callSendAPI(sender_psid, 'Goodbye 👋');
-  // } else {
-  //   localStorage.setItem('name', message.text);
-  //   inputUser(message.text, 'name');
-  //   callSendAPI(sender_psid, 'Please insert your birth date. (YYYY-MM-DD)');
-  // }
-
-  // inputUser()
-
+  // Create User Chat Records to DB
   createMessenger(sender_psid, message.text);
 };
 
@@ -142,7 +76,6 @@ const createMessenger = (sender_psid, text) => {
 
         try {
           // Check (Create if not exist) / Get User from Database
-          // console.log('fb id', data.id);
           let user = await User.findOne({ where: { fbId: data.id } });
 
           if (!user) {
@@ -201,9 +134,7 @@ const inputUser = async (sender_psid, message) => {
             }
           });
 
-          console.log('entity choosen', entityChosen);
-          console.log('text:', text);
-
+          // Main Flow
           if (!input) {
             if (
               entityChosen === 'wit$greetings' ||
@@ -292,6 +223,7 @@ const inputUser = async (sender_psid, message) => {
               }
             }
           }
+          // End Main Flow
         } catch (err) {
           console.log('err:', err);
         }
