@@ -25,7 +25,6 @@
     "express": "^4.17.2",
     "moment": "^2.29.1",
     "mongoose": "^6.1.8",
-    "node-localstorage": "^2.2.1",
     "pg": "^8.7.1",
     "request": "^2.88.2",
     "sequelize": "^6.14.0",
